@@ -1,9 +1,12 @@
 package com.mankovskaya.githubtest.model.feature
 
+import com.mankovskaya.githubtest.R
+import com.mankovskaya.githubtest.core.android.ResourceManager
 import com.mankovskaya.githubtest.core.mvvm.BaseStatefulViewModel
 import com.mankovskaya.githubtest.core.mvvm.StateReducer
-import com.mankovskaya.githubtest.model.mock.AuthMockService
+import com.mankovskaya.githubtest.model.network.ConnectionError
 import com.mankovskaya.githubtest.model.repository.AuthRepository
+import com.mankovskaya.githubtest.ui.widget.ErrorState
 import com.mankovskaya.githubtest.ui.widget.StateAction
 
 data class LoginState(
@@ -13,7 +16,7 @@ data class LoginState(
 )
 
 sealed class LoginEvent {
-    object NavigateToRepositories: LoginEvent()
+    object NavigateToRepositories : LoginEvent()
 }
 
 sealed class LoginAction {
@@ -25,7 +28,7 @@ sealed class LoginAction {
 }
 
 class LoginViewModel(
-    private val authMockService: AuthMockService,
+    private val resourceManager: ResourceManager,
     private val authRepository: AuthRepository
 ) :
     BaseStatefulViewModel<LoginState, LoginAction, LoginEvent>(
@@ -66,17 +69,21 @@ class LoginViewModel(
     private fun login(email: String, password: String) {
         authRepository.login(email, password)
             .subscribe(
-                {
-                    reactOnAction(LoginAction.SuccessfulLogin)
+                { successfulLogin ->
+                    if (successfulLogin) reactOnAction(LoginAction.SuccessfulLogin)
+                    else reactOnAction(LoginAction.LoginError(resourceManager.getString(R.string.login_wrong_credentials_error)))
                 }, {
-                    reactOnAction(
-                        LoginAction.LoginError(
-                            it.localizedMessage ?: "Error"
-                        )
-                    )
+                    sendStateAction(StateAction.ErrorOccurred(
+                        ErrorState(
+                            resourceManager.getString(it.getDefaultMessageId())
+                        ) { login(email, password) }
+                    ))
                 }
             ).subscribeUntilDestroy()
     }
+
+    fun Throwable.getDefaultMessageId() =
+        if (this is ConnectionError) R.string.error_connection else R.string.error_default
 
     private fun navigateNext() {
         postEvent(LoginEvent.NavigateToRepositories)

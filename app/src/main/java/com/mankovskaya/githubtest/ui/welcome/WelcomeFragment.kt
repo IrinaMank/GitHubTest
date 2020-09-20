@@ -29,6 +29,9 @@ class WelcomeFragment : Fragment() {
         val appBarConfiguration = AppBarConfiguration(navController.graph)
         toolbar.setupWithNavController(navController, appBarConfiguration)
         loginButton.setOnClickListener {
+            this.findNavController().navigate(R.id.action_welcomeFragment_to_loginFragment)
+        }
+        continueButton.setOnClickListener {
             this.findNavController().navigate(R.id.action_welcomeFragment_to_repoFragment)
         }
     }

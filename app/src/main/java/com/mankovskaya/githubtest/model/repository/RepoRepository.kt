@@ -12,7 +12,7 @@ class RepoRepository(
     schedulersProvider: SchedulersProvider
 ) : BaseRepository(schedulersProvider) {
 
-    fun search(query: String): Observable<RepositoryResult> =
+    fun pagedSearch(query: String): Observable<RepositoryResult> =
         PagingTool
             .wrapToPagination { pagingData ->
                 searchApi.searchRepositories(query, pagingData.pageNumber, pagingData.pageSize)

@@ -1,9 +1,9 @@
 package com.mankovskaya.githubtest.system.di
 
+import android.content.Context
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
-import com.fasterxml.jackson.datatype.joda.JodaModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.mankovskaya.githubtest.BuildConfig
 import com.mankovskaya.githubtest.core.android.ResourceManager
@@ -12,6 +12,7 @@ import com.mankovskaya.githubtest.model.feature.RepositoriesViewModel
 import com.mankovskaya.githubtest.model.mock.AuthMockService
 import com.mankovskaya.githubtest.model.network.AuthApi
 import com.mankovskaya.githubtest.model.network.BasicAuthenticator
+import com.mankovskaya.githubtest.model.network.ErrorInterceptor
 import com.mankovskaya.githubtest.model.network.SearchApi
 import com.mankovskaya.githubtest.model.repository.AuthRepository
 import com.mankovskaya.githubtest.model.repository.CredentialsRepository
@@ -38,7 +39,7 @@ val appModule = module {
 
 val networkModule = module {
     factory { BasicAuthenticator(get()) }
-    factory { provideOkHttpClient(get()) }
+    factory { provideOkHttpClient(get(), get()) }
     factory { provideAuthApi(get()) }
     factory { provideSearchApi(get()) }
     single { provideRetrofit(get()) }
@@ -52,11 +53,14 @@ fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         .addCallAdapterFactory(RxJava2CallAdapterFactory.create()).build()
 }
 
-fun provideOkHttpClient(authInterceptor: BasicAuthenticator): OkHttpClient {
+fun provideOkHttpClient(authInterceptor: BasicAuthenticator, context: Context): OkHttpClient {
     return OkHttpClient()
         .newBuilder()
         .addInterceptor(authInterceptor)
-        .addInterceptor(HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY })
+        .addInterceptor(ErrorInterceptor(context))
+        .addInterceptor(HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        })
         .build()
 }
 

@@ -1,11 +1,13 @@
 <resources>
-    <string name="app_name">MVI example</string>
-    <string name="login_email_hint">Email</string>
+    <string name="app_name">Github Test</string>
+    <string name="error_default">Something get wrong. Please, try again.</string>
+    <string name="error_connection">Seems that smth wrong with your connection. Check network and try again!</string>
+
+    <string name="welcome_title">Welcome!</string>
+    <string name="welcome_login">login</string>
+    <string name="welcome_without_login">Continue without login</string>
+
+    <string name="login_email_hint">Username or email</string>
     <string name="login_password_hint">Password</string>
-    <string name="login_password_confirm_hint">Confirm password</string>
-    <string name="sign_up_email_error">Email format is incorrect</string>
-    <string name="sign_up_password_error_too_short">Password must contain 8 symbols</string>
-    <string name="sign_up_password_error_no_letters">Password must contain at least 1 letter</string>
-    <string name="sign_up_password_error_no_numbers">Password must contain at least 1 number</string>
-    <string name="sign_up_password_error_empty">Please, enter password</string>
+    <string name="login_wrong_credentials_error">Wrong username or password. Try again</string>
 </resources>

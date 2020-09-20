@@ -54,7 +54,7 @@ class RepositoriesViewModel(
         if (searchInput.isEmpty()) return
         terminatePreviousSearchRequests()
         listenToPagingUpdates()
-        repoRepository.search(searchInput)
+        repoRepository.pagedSearch(searchInput)
             .doOnSubscribe { reactOnAction(RepositorySearchAction.SearchStarted) }
             .subscribe(
                 { result ->
