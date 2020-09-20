@@ -3,7 +3,8 @@ package com.mankovskaya.githubtest.model.network
 import com.fasterxml.jackson.annotation.JsonProperty
 
 data class RepoSearchResponse(
-    @JsonProperty("items") val items: List<RepositoryResponse>
+    @JsonProperty("items") val items: List<RepositoryResponse>,
+    @JsonProperty("total_count") val total: Int
 )
 data class RepositoryResponse(
     @JsonProperty("owner") val owner: OwnerResponse,

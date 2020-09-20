@@ -3,7 +3,7 @@ package com.mankovskaya.githubtest.model.feature
 import com.mankovskaya.githubtest.core.mvvm.BaseStatefulViewModel
 import com.mankovskaya.githubtest.core.mvvm.StateReducer
 import com.mankovskaya.githubtest.core.paging.PagingTool
-import com.mankovskaya.githubtest.model.data.Repository
+import com.mankovskaya.githubtest.model.data.RepositoryResult
 import com.mankovskaya.githubtest.model.repository.RepoRepository
 import com.mankovskaya.githubtest.ui.widget.ErrorState
 import com.mankovskaya.githubtest.ui.widget.StateAction
@@ -18,10 +18,6 @@ class RepositoriesViewModel(
     )
 ) {
     override val stateReducer = RepositoryReducer()
-
-    init {
-        listenToPagingUpdates()
-    }
 
     inner class RepositoryReducer :
         StateReducer<RepositoriesSearchState, RepositorySearchAction>() {
@@ -57,6 +53,7 @@ class RepositoriesViewModel(
     private fun searchRepos(searchInput: String) {
         if (searchInput.isEmpty()) return
         terminatePreviousSearchRequests()
+        listenToPagingUpdates()
         repoRepository.search(searchInput)
             .doOnSubscribe { reactOnAction(RepositorySearchAction.SearchStarted) }
             .subscribe(
@@ -75,7 +72,7 @@ class RepositoriesViewModel(
             .subscribe {
                 if (it.pageNumber > 1) reactOnAction(RepositorySearchAction.LazyLoadChanged(true))
             }
-            .subscribeUntilDestroy()
+            .subscribeUntilDestroyBy(TAG_PAGING_EVENTS)
     }
 
     private fun terminatePreviousSearchRequests() {
@@ -85,12 +82,13 @@ class RepositoriesViewModel(
         PagingTool.dispatchNewPage(1, PAGE_SIZE)
     }
 
-    private fun processResult(result: List<Repository>) {
+    private fun processResult(result: RepositoryResult) {
         reactOnAction(RepositorySearchAction.LazyLoadChanged(false))
+        if (!result.canLoadMore) disposables.unsubscribeBy(TAG_PAGING_EVENTS)
         val newList = if (PagingTool.currentPage() > 1) {
-            getCurrentState().repositories.toMutableList().apply { addAll(result) }
+            getCurrentState().repositories.toMutableList().apply { addAll(result.repositories) }
         } else {
-            result
+            result.repositories
         }
         reactOnAction(RepositorySearchAction.RepositoryRefreshed(newList))
     }
@@ -107,6 +105,7 @@ class RepositoriesViewModel(
     companion object {
         const val PAGE_SIZE = 10
         private const val TAG_SEARCH_REQUEST = "TAG_SEARCH_REQUEST"
+        private const val TAG_PAGING_EVENTS = "TAG_PAGING_EVENTS"
     }
 
 }

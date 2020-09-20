@@ -14,7 +14,7 @@ object PagingTool {
         pagingRelay.accept(PagingData(pageNum, pageSize))
     }
 
-    fun <T> wrapToPagination(emitter: ((PagingData) -> Single<List<T>>)): Observable<List<T>> =
+    fun <T> wrapToPagination(emitter: ((PagingData) -> Single<T>)): Observable<T> =
         pagingRelay
             .subscribeOn(AndroidSchedulers.mainThread())
             .distinctUntilChanged()
