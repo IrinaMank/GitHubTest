@@ -1,0 +1,18 @@
+def propertiesFile = rootProject.file("gradle.properties")
+def properties = new Properties()
+properties.load(new FileInputStream(propertiesFile))
+
+ext.config = [
+        package: properties.getProperty("PACKAGE_NAME"),
+
+        build  : [
+                code: properties.getProperty("VERSION_CODE") as Integer,
+                name: properties.getProperty("VERSION_NAME"),
+        ],
+
+        sdk    : [
+                min    : 23,
+                target : 29,
+                compile: 29,
+        ]
+]

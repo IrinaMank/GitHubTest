@@ -1,0 +1,141 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
+
+androidExtensions {
+    experimental = true
+}
+
+
+android {
+    compileSdkVersion config.sdk.compile
+
+    defaultConfig {
+        applicationId config.package
+        minSdkVersion config.sdk.min
+        targetSdkVersion config.sdk.target
+        versionCode config.build.code
+        versionName config.build.name
+        multiDexEnabled true
+        buildConfigField("String", "API_ROOT", "\"https://api.github.com/\"")
+    }
+
+    dataBinding {
+        enabled = true
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig = buildTypes.debug.signingConfig
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+        }
+    }
+
+    sourceSets {
+        main.java.srcDirs += [file("$buildDir/generated/source/kapt/main")]
+    }
+
+    //Options
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
+
+    lintOptions {
+        abortOnError true
+        checkAllWarnings true
+        disable 'AllowBackup'
+        disable 'ContentDescription'
+        disable 'InvalidPackage'
+        disable 'SpUsage'
+        disable 'IconMissingDensityFolder'
+        disable 'SelectableText'
+        disable 'RtlCompat', 'RtlEnabled', 'RtlHardcoded', 'RtlSymmetry'
+        disable 'MissingPrefix'
+        disable 'MissingRegistered'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+}
+
+dependencies {
+    /* test dependencies */
+    testImplementation lib.junit
+    testImplementation lib.mockitoCore
+
+    /* Local files */
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+
+    /* Kotlin */
+    implementation lib.kotlinStd
+    implementation lib.kotlinReflect
+
+    /* AndroidX Libraries */
+    implementation lib.androidXCore
+    implementation lib.androidXCoreKtx
+    implementation lib.androidXRecyclerView
+    implementation lib.androidXCardView
+    implementation "com.google.android.material:material:1.2.1"
+    implementation lib.androidXMultiDex
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+
+    /* Logger */
+    implementation lib.slf4j
+    implementation lib.logbackCore
+    implementation(lib.logbackClassic) {
+        exclude group: 'com.google.android', module: 'android'
+    }
+
+    /* Network */
+    implementation lib.okHttp3
+    implementation lib.okHttp3LoggingInterceptor
+    implementation lib.retrofit2
+    implementation lib.retrofit2jackson
+    implementation lib.retrofit2rx
+    implementation lib.jacksonCore
+    implementation lib.jacksonDatabind
+    implementation lib.jacksonAnnotations
+    implementation lib.jacksonKotlin
+    implementation(lib.jacksonJoda) {
+        exclude group: 'joda-time', module: 'joda-time'
+    }
+
+    /* Rx */
+    implementation lib.rxJava2
+    implementation lib.rxAndroid2
+    implementation lib.rxKotlin
+    implementation lib.rxRelay2
+
+    /* Useful libraries */
+    implementation lib.joda
+    implementation "com.github.bumptech.glide:glide:4.11.0"
+    kapt "com.github.bumptech.glide:glide:4.11.0"
+
+    /* Debug tools */
+    implementation lib.stetho
+
+    /* Jetpack */
+    def lifecycle_version = "2.2.0"
+    def nav_version = "2.3.0"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+    androidTestImplementation "androidx.navigation:navigation-testing:$nav_version"
+
+    /* Koin */
+    implementation "org.koin:koin-core:2.1.6"
+    implementation "org.koin:koin-android:2.1.6"
+    implementation "org.koin:koin-android-viewmodel:2.1.6"
+    // Testing
+    testImplementation "org.koin:koin-test:2.1.6"
+
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+}

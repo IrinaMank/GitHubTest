@@ -1,0 +1,28 @@
+apply from: 'gradle/dependencies.gradle'
+
+buildscript {
+    apply from: 'gradle/dependencies.gradle'
+
+    repositories {
+        jcenter()
+        mavenCentral()
+        google()
+    }
+
+
+    dependencies {
+        classpath plugin.android
+        classpath plugin.kotlin
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+        mavenCentral()
+        google()
+
+        maven { url 'https://jitpack.io' }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+    }
+}
