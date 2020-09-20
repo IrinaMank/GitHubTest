@@ -18,8 +18,8 @@ import com.mankovskaya.githubtest.R
 import com.mankovskaya.githubtest.core.android.BaseFragment
 import com.mankovskaya.githubtest.core.paging.PagingManager
 import com.mankovskaya.githubtest.databinding.FragmentRepositoriesBinding
-import com.mankovskaya.githubtest.model.feature.*
-import com.mankovskaya.githubtest.model.feature.RepositoriesViewModel.Companion.PAGE_SIZE
+import com.mankovskaya.githubtest.domain.feature.repo.*
+import com.mankovskaya.githubtest.domain.feature.repo.RepositoriesViewModel.Companion.PAGE_SIZE
 import kotlinx.android.synthetic.main.view_toolbar.*
 import org.koin.android.viewmodel.ext.android.viewModel
 

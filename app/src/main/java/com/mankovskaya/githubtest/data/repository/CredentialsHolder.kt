@@ -1,4 +1,4 @@
-package com.mankovskaya.githubtest.model.repository
+package com.mankovskaya.githubtest.data.repository
 
 import android.content.Context
 

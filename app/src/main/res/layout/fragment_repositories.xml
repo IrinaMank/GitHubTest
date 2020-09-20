@@ -13,7 +13,7 @@
 
         <variable
             name="viewModel"
-            type="com.mankovskaya.githubtest.model.feature.RepositoriesViewModel" />
+            type="com.mankovskaya.githubtest.domain.feature.repo.RepositoriesViewModel" />
     </data>
 
     <RelativeLayout

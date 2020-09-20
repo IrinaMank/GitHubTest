@@ -1,11 +1,11 @@
-package com.mankovskaya.githubtest.model.feature
+package com.mankovskaya.githubtest.domain.feature.repo
 
 import com.mankovskaya.githubtest.core.mvvm.BaseStatefulViewModel
 import com.mankovskaya.githubtest.core.mvvm.StateReducer
 import com.mankovskaya.githubtest.core.paging.PagingTool
-import com.mankovskaya.githubtest.model.data.RepositoryResult
-import com.mankovskaya.githubtest.model.repository.AuthRepository
-import com.mankovskaya.githubtest.model.repository.RepoRepository
+import com.mankovskaya.githubtest.data.model.RepositoryResult
+import com.mankovskaya.githubtest.data.repository.AuthRepository
+import com.mankovskaya.githubtest.data.repository.RepoRepository
 import com.mankovskaya.githubtest.ui.widget.ErrorState
 import com.mankovskaya.githubtest.ui.widget.StateAction
 
@@ -17,7 +17,9 @@ class RepositoriesViewModel(
         searchQuery = null,
         repositories = listOf(),
         lazyLoad = false,
-        authButton = AuthButtonState.getState(authRepository.userLogged())
+        authButton = AuthButtonState.getState(
+            authRepository.userLogged()
+        )
     )
 ) {
     override val stateReducer = RepositoryReducer()
@@ -95,7 +97,10 @@ class RepositoriesViewModel(
         if (disposables.anyInProgress(TAG_SEARCH_REQUEST)) {
             disposables.unsubscribeBy(TAG_SEARCH_REQUEST)
         }
-        PagingTool.dispatchNewPage(1, PAGE_SIZE)
+        PagingTool.dispatchNewPage(
+            1,
+            PAGE_SIZE
+        )
     }
 
     private fun processResult(result: RepositoryResult) {

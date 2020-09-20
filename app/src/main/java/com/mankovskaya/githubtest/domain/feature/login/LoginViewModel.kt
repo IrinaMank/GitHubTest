@@ -1,11 +1,11 @@
-package com.mankovskaya.githubtest.model.feature
+package com.mankovskaya.githubtest.domain.feature.login
 
 import com.mankovskaya.githubtest.R
 import com.mankovskaya.githubtest.core.android.ResourceManager
 import com.mankovskaya.githubtest.core.mvvm.BaseStatefulViewModel
 import com.mankovskaya.githubtest.core.mvvm.StateReducer
-import com.mankovskaya.githubtest.model.network.ConnectionError
-import com.mankovskaya.githubtest.model.repository.AuthRepository
+import com.mankovskaya.githubtest.data.network.error.ConnectionError
+import com.mankovskaya.githubtest.data.repository.AuthRepository
 import com.mankovskaya.githubtest.ui.widget.ErrorState
 import com.mankovskaya.githubtest.ui.widget.StateAction
 
@@ -71,7 +71,11 @@ class LoginViewModel(
             .subscribe(
                 { successfulLogin ->
                     if (successfulLogin) reactOnAction(LoginAction.SuccessfulLogin)
-                    else reactOnAction(LoginAction.LoginError(resourceManager.getString(R.string.login_wrong_credentials_error)))
+                    else reactOnAction(
+                        LoginAction.LoginError(
+                            resourceManager.getString(R.string.login_wrong_credentials_error)
+                        )
+                    )
                 }, {
                     sendStateAction(StateAction.ErrorOccurred(
                         ErrorState(

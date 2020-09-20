@@ -1,6 +1,6 @@
-package com.mankovskaya.githubtest.model.network
+package com.mankovskaya.githubtest.data.network.interceptor
 
-import com.mankovskaya.githubtest.model.repository.CredentialsHolder
+import com.mankovskaya.githubtest.data.repository.CredentialsHolder
 import okhttp3.Credentials
 import okhttp3.Interceptor
 

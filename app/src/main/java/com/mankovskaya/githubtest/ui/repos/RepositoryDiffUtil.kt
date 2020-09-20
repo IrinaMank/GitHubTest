@@ -1,7 +1,7 @@
 package com.mankovskaya.githubtest.ui.repos
 
 import androidx.recyclerview.widget.DiffUtil
-import com.mankovskaya.githubtest.model.data.Repository
+import com.mankovskaya.githubtest.data.model.Repository
 
 class RepositoryDiffUtil(
     private val newRepositories: List<Repository>,

@@ -7,16 +7,15 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.mankovskaya.githubtest.BuildConfig
 import com.mankovskaya.githubtest.core.android.ResourceManager
-import com.mankovskaya.githubtest.model.feature.LoginViewModel
-import com.mankovskaya.githubtest.model.feature.RepositoriesViewModel
-import com.mankovskaya.githubtest.model.mock.AuthMockService
-import com.mankovskaya.githubtest.model.network.AuthApi
-import com.mankovskaya.githubtest.model.network.BasicAuthenticator
-import com.mankovskaya.githubtest.model.network.ErrorInterceptor
-import com.mankovskaya.githubtest.model.network.SearchApi
-import com.mankovskaya.githubtest.model.repository.AuthRepository
-import com.mankovskaya.githubtest.model.repository.CredentialsHolder
-import com.mankovskaya.githubtest.model.repository.RepoRepository
+import com.mankovskaya.githubtest.data.network.api.AuthApi
+import com.mankovskaya.githubtest.data.network.api.SearchApi
+import com.mankovskaya.githubtest.data.network.interceptor.BasicAuthenticator
+import com.mankovskaya.githubtest.data.network.interceptor.ErrorInterceptor
+import com.mankovskaya.githubtest.data.repository.AuthRepository
+import com.mankovskaya.githubtest.data.repository.CredentialsHolder
+import com.mankovskaya.githubtest.data.repository.RepoRepository
+import com.mankovskaya.githubtest.domain.feature.login.LoginViewModel
+import com.mankovskaya.githubtest.domain.feature.repo.RepositoriesViewModel
 import com.mankovskaya.githubtest.system.scheduler.AppSchedulers
 import com.mankovskaya.githubtest.system.scheduler.SchedulersProvider
 import okhttp3.OkHttpClient
@@ -29,16 +28,29 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.jackson.JacksonConverterFactory
 
 val appModule = module {
-    single { AuthMockService() }
     single { ResourceManager(androidContext()) }
     single { CredentialsHolder(androidContext()) }
     single<SchedulersProvider> { AppSchedulers() }
-    viewModel { LoginViewModel(get(), get()) }
-    viewModel { RepositoriesViewModel(get(), get()) }
+    viewModel {
+        LoginViewModel(
+            get(),
+            get()
+        )
+    }
+    viewModel {
+        RepositoriesViewModel(
+            get(),
+            get()
+        )
+    }
 }
 
 val networkModule = module {
-    factory { BasicAuthenticator(get()) }
+    factory {
+        BasicAuthenticator(
+            get()
+        )
+    }
     factory { provideOkHttpClient(get(), get()) }
     factory { provideAuthApi(get()) }
     factory { provideSearchApi(get()) }
@@ -57,16 +69,24 @@ fun provideOkHttpClient(authInterceptor: BasicAuthenticator, context: Context): 
     return OkHttpClient()
         .newBuilder()
         .addInterceptor(authInterceptor)
-        .addInterceptor(ErrorInterceptor(context))
+        .addInterceptor(
+            ErrorInterceptor(
+                context
+            )
+        )
         .addInterceptor(HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         })
         .build()
 }
 
-fun provideAuthApi(retrofit: Retrofit): AuthApi = retrofit.create(AuthApi::class.java)
+fun provideAuthApi(retrofit: Retrofit): AuthApi = retrofit.create(
+    AuthApi::class.java
+)
 
-fun provideSearchApi(retrofit: Retrofit): SearchApi = retrofit.create(SearchApi::class.java)
+fun provideSearchApi(retrofit: Retrofit): SearchApi = retrofit.create(
+    SearchApi::class.java
+)
 
 fun provideObjectMapper() =
     ObjectMapper().apply {

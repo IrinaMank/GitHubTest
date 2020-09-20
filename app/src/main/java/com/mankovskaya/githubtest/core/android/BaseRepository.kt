@@ -1,4 +1,4 @@
-package com.mankovskaya.githubtest.model.repository
+package com.mankovskaya.githubtest.core.android
 
 import com.mankovskaya.githubtest.system.scheduler.SchedulersProvider
 import io.reactivex.*

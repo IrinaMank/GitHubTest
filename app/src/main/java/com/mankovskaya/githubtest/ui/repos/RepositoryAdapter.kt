@@ -4,7 +4,7 @@ import androidx.recyclerview.widget.DiffUtil
 import com.mankovskaya.githubtest.R
 import com.mankovskaya.githubtest.core.android.BaseRecyclerViewAdapter
 import com.mankovskaya.githubtest.core.paging.PagingAdapter
-import com.mankovskaya.githubtest.model.data.Repository
+import com.mankovskaya.githubtest.data.model.Repository
 
 class RepositoryAdapter : BaseRecyclerViewAdapter(), PagingAdapter {
 

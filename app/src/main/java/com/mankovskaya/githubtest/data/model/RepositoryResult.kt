@@ -1,4 +1,4 @@
-package com.mankovskaya.githubtest.model.data
+package com.mankovskaya.githubtest.data.model
 
 data class RepositoryResult(
     val canLoadMore: Boolean,

@@ -1,8 +1,8 @@
-package com.mankovskaya.githubtest.model.feature
+package com.mankovskaya.githubtest.domain.feature.repo
 
 import androidx.annotation.StringRes
 import com.mankovskaya.githubtest.R
-import com.mankovskaya.githubtest.model.data.Repository
+import com.mankovskaya.githubtest.data.model.Repository
 
 data class RepositoriesSearchState(
     val searchQuery: String?,

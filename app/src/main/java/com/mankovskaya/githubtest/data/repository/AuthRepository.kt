@@ -1,7 +1,8 @@
-package com.mankovskaya.githubtest.model.repository
+package com.mankovskaya.githubtest.data.repository
 
-import com.mankovskaya.githubtest.model.network.AuthApi
-import com.mankovskaya.githubtest.model.network.UnauthorizedError
+import com.mankovskaya.githubtest.core.android.BaseRepository
+import com.mankovskaya.githubtest.data.network.api.AuthApi
+import com.mankovskaya.githubtest.data.network.error.UnauthorizedError
 import com.mankovskaya.githubtest.system.scheduler.SchedulersProvider
 import io.reactivex.Completable
 import io.reactivex.Single

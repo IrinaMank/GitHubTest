@@ -7,7 +7,7 @@
         <import type="android.view.View" />
 
         <import type="com.google.android.material.textfield.TextInputLayout" />
-        <import type="com.mankovskaya.githubtest.model.feature.LoginAction" />
+        <import type="com.mankovskaya.githubtest.domain.feature.login.LoginAction" />
 
         <variable
             name="stateViewModel"
@@ -15,7 +15,7 @@
 
         <variable
             name="viewModel"
-            type="com.mankovskaya.githubtest.model.feature.LoginViewModel" />
+            type="com.mankovskaya.githubtest.domain.feature.login.LoginViewModel" />
     </data>
     <RelativeLayout
         xmlns:app="http://schemas.android.com/apk/res-auto"

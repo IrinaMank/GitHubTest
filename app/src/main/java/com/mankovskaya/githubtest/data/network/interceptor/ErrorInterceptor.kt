@@ -1,7 +1,9 @@
-package com.mankovskaya.githubtest.model.network
+package com.mankovskaya.githubtest.data.network.interceptor
 
 import android.content.Context
 import android.net.ConnectivityManager
+import com.mankovskaya.githubtest.data.network.error.ConnectionError
+import com.mankovskaya.githubtest.data.network.error.UnauthorizedError
 import okhttp3.Interceptor
 
 class ErrorInterceptor(private val context: Context) : Interceptor {

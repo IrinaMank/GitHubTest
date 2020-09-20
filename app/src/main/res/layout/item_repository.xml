@@ -9,7 +9,7 @@
 
         <variable
             name="viewModel"
-            type="com.mankovskaya.githubtest.model.data.Repository" />
+            type="com.mankovskaya.githubtest.data.model.Repository" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

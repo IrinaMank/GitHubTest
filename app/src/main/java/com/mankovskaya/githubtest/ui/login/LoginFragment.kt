@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.Navigation
@@ -14,9 +13,9 @@ import androidx.navigation.ui.setupWithNavController
 import com.mankovskaya.githubtest.R
 import com.mankovskaya.githubtest.core.android.BaseFragment
 import com.mankovskaya.githubtest.databinding.FragmentLoginBinding
-import com.mankovskaya.githubtest.model.feature.LoginAction
-import com.mankovskaya.githubtest.model.feature.LoginEvent
-import com.mankovskaya.githubtest.model.feature.LoginViewModel
+import com.mankovskaya.githubtest.domain.feature.login.LoginAction
+import com.mankovskaya.githubtest.domain.feature.login.LoginEvent
+import com.mankovskaya.githubtest.domain.feature.login.LoginViewModel
 import kotlinx.android.synthetic.main.view_toolbar.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
