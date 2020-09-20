@@ -4,8 +4,8 @@ import com.mankovskaya.githubtest.R
 import com.mankovskaya.githubtest.core.android.ResourceManager
 import com.mankovskaya.githubtest.core.mvvm.BaseStatefulViewModel
 import com.mankovskaya.githubtest.core.mvvm.StateReducer
-import com.mankovskaya.githubtest.data.network.error.ConnectionError
 import com.mankovskaya.githubtest.data.repository.AuthRepository
+import com.mankovskaya.githubtest.ui.common.getDefaultMessageId
 import com.mankovskaya.githubtest.ui.widget.ErrorState
 import com.mankovskaya.githubtest.ui.widget.StateAction
 
@@ -72,22 +72,20 @@ class LoginViewModel(
                 { successfulLogin ->
                     if (successfulLogin) reactOnAction(LoginAction.SuccessfulLogin)
                     else reactOnAction(
-                        LoginAction.LoginError(
-                            resourceManager.getString(R.string.login_wrong_credentials_error)
-                        )
+                        LoginAction.LoginError(resourceManager.getString(R.string.login_wrong_credentials_error))
                     )
                 }, {
                     sendStateAction(StateAction.ErrorOccurred(
-                        ErrorState(
-                            resourceManager.getString(it.getDefaultMessageId())
-                        ) { login(email, password) }
+                        ErrorState(resourceManager.getString(it.getDefaultMessageId())) {
+                            login(
+                                email,
+                                password
+                            )
+                        }
                     ))
                 }
             ).subscribeUntilDestroy()
     }
-
-    fun Throwable.getDefaultMessageId() =
-        if (this is ConnectionError) R.string.error_connection else R.string.error_default
 
     private fun navigateNext() {
         postEvent(LoginEvent.NavigateToRepositories)

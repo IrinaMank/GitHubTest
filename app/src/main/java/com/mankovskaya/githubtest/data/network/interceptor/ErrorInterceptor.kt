@@ -13,7 +13,7 @@ class ErrorInterceptor(private val context: Context) : Interceptor {
             throw ConnectionError()
         }
 
-        var request = chain.request()
+        val request = chain.request()
         val response = chain.proceed(request)
         if (response.code == 401 || response.code == 403) throw UnauthorizedError()
         return response

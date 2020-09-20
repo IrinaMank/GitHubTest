@@ -75,10 +75,18 @@ class RepositoriesFragment : BaseFragment<RepositoriesViewModel>(), PagingManage
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        configureToolbar()
+        configureMenu()
+    }
+
+    private fun configureToolbar() {
         val navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
         val appBarConfiguration = AppBarConfiguration.Builder(setOf(R.id.repoFragment)).build()
         toolbar.setupWithNavController(navController, appBarConfiguration)
         toolbar.inflateMenu(R.menu.repo_menu)
+    }
+
+    private fun configureMenu() {
         val item: MenuItem = toolbar.menu.findItem(R.id.action_search)
         val searchView = androidx.appcompat.widget.SearchView(requireContext())
         item.setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW or MenuItem.SHOW_AS_ACTION_IF_ROOM)

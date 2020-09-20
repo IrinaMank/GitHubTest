@@ -1,17 +1,20 @@
 package com.mankovskaya.githubtest.domain.feature.repo
 
+import com.mankovskaya.githubtest.core.android.ResourceManager
 import com.mankovskaya.githubtest.core.mvvm.BaseStatefulViewModel
 import com.mankovskaya.githubtest.core.mvvm.StateReducer
 import com.mankovskaya.githubtest.core.paging.PagingTool
 import com.mankovskaya.githubtest.data.model.RepositoryResult
 import com.mankovskaya.githubtest.data.repository.AuthRepository
 import com.mankovskaya.githubtest.data.repository.RepoRepository
+import com.mankovskaya.githubtest.ui.common.getDefaultMessageId
 import com.mankovskaya.githubtest.ui.widget.ErrorState
 import com.mankovskaya.githubtest.ui.widget.StateAction
 
 class RepositoriesViewModel(
     private val repoRepository: RepoRepository,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val resourceManager: ResourceManager
 ) : BaseStatefulViewModel<RepositoriesSearchState, RepositorySearchAction, RepoEvent>(
     RepositoriesSearchState(
         searchQuery = null,
@@ -38,10 +41,6 @@ class RepositoriesViewModel(
                 }
                 is RepositorySearchAction.SearchStarted -> {
                     sendStateAction(StateAction.ProgressStarted)
-                    state
-                }
-                is RepositorySearchAction.SearchError -> {
-                    sendStateAction(StateAction.ErrorOccurred(ErrorState(action.message, null)))
                     state
                 }
                 is RepositorySearchAction.RepositoryRefreshed -> {
@@ -79,13 +78,23 @@ class RepositoriesViewModel(
                     processResult(result)
                 },
                 {
-                    processError(it)
+                    reactOnAction(RepositorySearchAction.LazyLoadChanged(false))
+                    sendStateAction(StateAction.ErrorOccurred(
+                        ErrorState(resourceManager.getString(it.getDefaultMessageId())) {
+                            searchRepos(
+                                searchInput
+                            )
+                        }
+                    ))
                 }
             ).subscribeUntilDestroyBy(TAG_SEARCH_REQUEST)
 
     }
 
     private fun listenToPagingUpdates() {
+        if (disposables.anyInProgress(TAG_PAGING_EVENTS)) {
+            disposables.unsubscribeBy(TAG_PAGING_EVENTS)
+        }
         PagingTool.observePaging()
             .subscribe {
                 if (it.pageNumber > 1) reactOnAction(RepositorySearchAction.LazyLoadChanged(true))
@@ -112,15 +121,6 @@ class RepositoriesViewModel(
             result.repositories
         }
         reactOnAction(RepositorySearchAction.RepositoryRefreshed(newList))
-    }
-
-    private fun processError(error: Throwable) {
-        reactOnAction(RepositorySearchAction.LazyLoadChanged(false))
-        reactOnAction(
-            RepositorySearchAction.SearchError(
-                error.localizedMessage ?: "Error"
-            )
-        )
     }
 
     companion object {

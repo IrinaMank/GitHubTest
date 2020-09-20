@@ -40,6 +40,7 @@ val appModule = module {
     viewModel {
         RepositoriesViewModel(
             get(),
+            get(),
             get()
         )
     }

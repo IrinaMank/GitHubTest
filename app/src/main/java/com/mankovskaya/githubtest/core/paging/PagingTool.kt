@@ -22,7 +22,7 @@ object PagingTool {
             .switchMapSingle { emitter.invoke(it) }
             .observeOn(AndroidSchedulers.mainThread())
 
-    fun observePaging() = pagingRelay
+    fun observePaging(): Observable<PagingData> = pagingRelay
         .subscribeOn(AndroidSchedulers.mainThread())
         .observeOn(AndroidSchedulers.mainThread())
 
