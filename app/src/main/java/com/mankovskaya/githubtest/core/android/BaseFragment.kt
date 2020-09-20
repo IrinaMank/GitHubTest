@@ -9,7 +9,7 @@ abstract class BaseFragment<VM : BaseViewModel<*, *, *>> : Fragment() {
     abstract val fragmentViewModel: VM
 
     protected fun listenToEvents(listener: (Any?) -> Unit) {
-        fragmentViewModel.liveEvent.observe(requireContext() as LifecycleOwner) { event ->
+        fragmentViewModel.liveEvent.observe(this as LifecycleOwner) { event ->
             listener(event)
         }
     }

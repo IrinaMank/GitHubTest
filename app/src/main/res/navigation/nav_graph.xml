@@ -15,6 +15,9 @@
             app:destination="@id/loginFragment" />
         <action
             android:id="@+id/action_welcomeFragment_to_repoFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/welcomeFragment"
+            app:popUpToInclusive="true"
             app:destination="@id/repoFragment" />
     </fragment>
 
@@ -25,7 +28,9 @@
         tools:layout="@layout/fragment_login" >
         <action
             android:id="@+id/action_loginFragment_to_RepoFragment"
-            app:destination="@id/repoFragment" />
+            app:destination="@id/repoFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/nav_graph" />
     </fragment>
 
     <fragment
@@ -36,5 +41,11 @@
         <action
             android:id="@+id/action_repoFragment_to_LoginFragment"
             app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_repoFragment_to_WelcomeFragment"
+            app:destination="@id/welcomeFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/repoFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 </navigation>

@@ -10,4 +10,7 @@
     <string name="login_email_hint">Username or email</string>
     <string name="login_password_hint">Password</string>
     <string name="login_wrong_credentials_error">Wrong username or password. Try again</string>
+
+    <string name="repository_auth_button_login">Login</string>
+    <string name="repository_auth_button_logout">Logout</string>
 </resources>

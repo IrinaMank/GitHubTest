@@ -8,21 +8,28 @@ import io.reactivex.Single
 
 class AuthRepository(
     private val authApi: AuthApi,
-    private val credentialsRepository: CredentialsRepository,
+    private val credentialsRepository: CredentialsHolder,
     schedulers: SchedulersProvider
 ) : BaseRepository(schedulers) {
 
     fun login(email: String, password: String) =
         Completable.fromAction {
-            credentialsRepository.email = email
-            credentialsRepository.password = password
+            credentialsRepository.saveCredentials(email, password)
         }
             .andThen(authApi.getUser())
             .toSingleDefault(true)
             .onErrorResumeNext {
-                if (it is UnauthorizedError) Single.just(false)
-                else Single.error(it)
+                if (it is UnauthorizedError) {
+                    logout()
+                    Single.just(false)
+                } else Single.error(it)
             }
             .schedule()
+
+    fun userLogged(): Boolean = credentialsRepository.credentialsSaved()
+
+    fun logout() {
+        credentialsRepository.clearCredentials()
+    }
 
 }

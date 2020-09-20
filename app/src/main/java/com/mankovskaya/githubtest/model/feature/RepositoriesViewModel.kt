@@ -4,17 +4,20 @@ import com.mankovskaya.githubtest.core.mvvm.BaseStatefulViewModel
 import com.mankovskaya.githubtest.core.mvvm.StateReducer
 import com.mankovskaya.githubtest.core.paging.PagingTool
 import com.mankovskaya.githubtest.model.data.RepositoryResult
+import com.mankovskaya.githubtest.model.repository.AuthRepository
 import com.mankovskaya.githubtest.model.repository.RepoRepository
 import com.mankovskaya.githubtest.ui.widget.ErrorState
 import com.mankovskaya.githubtest.ui.widget.StateAction
 
 class RepositoriesViewModel(
-    private val repoRepository: RepoRepository
-) : BaseStatefulViewModel<RepositoriesSearchState, RepositorySearchAction, Unit>(
+    private val repoRepository: RepoRepository,
+    private val authRepository: AuthRepository
+) : BaseStatefulViewModel<RepositoriesSearchState, RepositorySearchAction, RepoEvent>(
     RepositoriesSearchState(
         searchQuery = null,
         repositories = listOf(),
-        lazyLoad = false
+        lazyLoad = false,
+        authButton = AuthButtonState.getState(authRepository.userLogged())
     )
 ) {
     override val stateReducer = RepositoryReducer()
@@ -46,8 +49,21 @@ class RepositoriesViewModel(
                 is RepositorySearchAction.LazyLoadChanged -> {
                     state.copy(lazyLoad = action.show)
                 }
+                is RepositorySearchAction.AuthButtonPressed -> {
+                    if (authRepository.userLogged()) logOut() else login()
+                    state
+                }
             }
         }
+    }
+
+    private fun logOut() {
+        authRepository.logout()
+        postEvent(RepoEvent.NavigateToWelcome)
+    }
+
+    private fun login() {
+        postEvent(RepoEvent.NavigateToLogin)
     }
 
     private fun searchRepos(searchInput: String) {

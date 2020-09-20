@@ -9,6 +9,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -17,10 +18,8 @@ import com.mankovskaya.githubtest.R
 import com.mankovskaya.githubtest.core.android.BaseFragment
 import com.mankovskaya.githubtest.core.paging.PagingManager
 import com.mankovskaya.githubtest.databinding.FragmentRepositoriesBinding
-import com.mankovskaya.githubtest.model.feature.RepositoriesSearchState
-import com.mankovskaya.githubtest.model.feature.RepositoriesViewModel
+import com.mankovskaya.githubtest.model.feature.*
 import com.mankovskaya.githubtest.model.feature.RepositoriesViewModel.Companion.PAGE_SIZE
-import com.mankovskaya.githubtest.model.feature.RepositorySearchAction
 import kotlinx.android.synthetic.main.view_toolbar.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
@@ -28,6 +27,21 @@ class RepositoriesFragment : BaseFragment<RepositoriesViewModel>(), PagingManage
     override val fragmentViewModel: RepositoriesViewModel by viewModel()
 
     private val adapter by lazy { RepositoryAdapter() }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        listenToEvents { event ->
+            when (event) {
+                is RepoEvent.NavigateToLogin -> {
+                    findNavController().navigate(R.id.action_repoFragment_to_LoginFragment)
+                }
+                is RepoEvent.NavigateToWelcome -> {
+                    findNavController().navigate(R.id.action_repoFragment_to_WelcomeFragment)
+                }
+            }
+
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,6 +67,7 @@ class RepositoriesFragment : BaseFragment<RepositoriesViewModel>(), PagingManage
                 Observer<RepositoriesSearchState> {
                     adapter.setItems(it.repositories)
                     adapter.showLoading(it.lazyLoad)
+                    configureAuthButton(it.authButton)
                 })
         }
         return view
@@ -61,14 +76,15 @@ class RepositoriesFragment : BaseFragment<RepositoriesViewModel>(), PagingManage
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
-        val appBarConfiguration = AppBarConfiguration(navController.graph)
+        val appBarConfiguration = AppBarConfiguration.Builder(setOf(R.id.repoFragment)).build()
         toolbar.setupWithNavController(navController, appBarConfiguration)
         toolbar.inflateMenu(R.menu.repo_menu)
         val item: MenuItem = toolbar.menu.findItem(R.id.action_search)
         val searchView = androidx.appcompat.widget.SearchView(requireContext())
         item.setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW or MenuItem.SHOW_AS_ACTION_IF_ROOM)
         item.actionView = searchView
-        searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+        searchView.setOnQueryTextListener(object :
+            androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let {
                     fragmentViewModel.reactOnAction(RepositorySearchAction.SearchChanged(query))
@@ -85,9 +101,15 @@ class RepositoriesFragment : BaseFragment<RepositoriesViewModel>(), PagingManage
         })
         val itemAuth: MenuItem = toolbar.menu.findItem(R.id.action_authButton)
         itemAuth.setOnMenuItemClickListener {
-            navController.navigate(R.id.action_repoFragment_to_LoginFragment)
+            fragmentViewModel.reactOnAction(RepositorySearchAction.AuthButtonPressed)
             false
         }
+    }
 
+    private fun configureAuthButton(
+        authButtonState: AuthButtonState
+    ) {
+        val itemAuth: MenuItem = toolbar.menu.findItem(R.id.action_authButton)
+        itemAuth.title = getString(authButtonState.textId)
     }
 }

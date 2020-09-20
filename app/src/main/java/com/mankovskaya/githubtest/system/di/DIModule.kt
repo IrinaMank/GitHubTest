@@ -15,7 +15,7 @@ import com.mankovskaya.githubtest.model.network.BasicAuthenticator
 import com.mankovskaya.githubtest.model.network.ErrorInterceptor
 import com.mankovskaya.githubtest.model.network.SearchApi
 import com.mankovskaya.githubtest.model.repository.AuthRepository
-import com.mankovskaya.githubtest.model.repository.CredentialsRepository
+import com.mankovskaya.githubtest.model.repository.CredentialsHolder
 import com.mankovskaya.githubtest.model.repository.RepoRepository
 import com.mankovskaya.githubtest.system.scheduler.AppSchedulers
 import com.mankovskaya.githubtest.system.scheduler.SchedulersProvider
@@ -31,10 +31,10 @@ import retrofit2.converter.jackson.JacksonConverterFactory
 val appModule = module {
     single { AuthMockService() }
     single { ResourceManager(androidContext()) }
-    single { CredentialsRepository(androidContext()) }
+    single { CredentialsHolder(androidContext()) }
     single<SchedulersProvider> { AppSchedulers() }
     viewModel { LoginViewModel(get(), get()) }
-    viewModel { RepositoriesViewModel(get()) }
+    viewModel { RepositoriesViewModel(get(), get()) }
 }
 
 val networkModule = module {
