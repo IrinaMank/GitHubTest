@@ -2,6 +2,7 @@
     <string name="app_name">Github Test</string>
     <string name="error_default">Something get wrong. Please, try again.</string>
     <string name="error_connection">Seems that smth wrong with your connection. Check network and try again!</string>
+    <string name="common_retry">retry</string>
 
     <string name="welcome_title">Welcome!</string>
     <string name="welcome_login">login</string>
@@ -9,8 +10,12 @@
 
     <string name="login_email_hint">Username or email</string>
     <string name="login_password_hint">Password</string>
+    <string name="login_login">Login</string>
     <string name="login_wrong_credentials_error">Wrong username or password. Try again</string>
 
     <string name="repository_auth_button_login">Login</string>
     <string name="repository_auth_button_logout">Logout</string>
+    <string name="repository_empty">No repositories found. \nTry to change your search query</string>
+    <string name="repo_menu_search">Search</string>
+    <string name="repo_menu_auth">Login</string>
 </resources>

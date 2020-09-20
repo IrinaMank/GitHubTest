@@ -7,7 +7,7 @@ import io.reactivex.schedulers.Schedulers
 /**
  * Manages thread work. Contains function, that return thread, suitable for operation
  */
-class AppSchedulers() : SchedulersProvider {
+class AppSchedulers : SchedulersProvider {
 
     override fun ui(): Scheduler = AndroidSchedulers.mainThread()
 

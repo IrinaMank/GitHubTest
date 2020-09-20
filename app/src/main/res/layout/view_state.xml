@@ -44,7 +44,7 @@
                 android:text="@{viewModel.stateRelay.error.message}"
                 android:textAlignment="center"
                 android:textColor="#ffffff"
-                android:textSize="@dimen/size_large" />
+                android:textSize="24sp" />
 
             <Button
                 android:id="@+id/retryButton"
@@ -53,7 +53,7 @@
                 android:layout_below="@id/errorText"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="16dp"
-                android:text="retry" />
+                android:text="@string/common_retry" />
         </RelativeLayout>
 
     </FrameLayout>

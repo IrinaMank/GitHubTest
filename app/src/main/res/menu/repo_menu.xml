@@ -2,11 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/action_search"
-        android:title="Search"
+        android:title="@string/repo_menu_search"
         android:icon="@drawable/ic_search"
-        app:showAsAction="always"
+        app:showAsAction="ifRoom"
         app:actionViewClass="androidx.appcompat.widget.SearchView" />
-    <item android:id="@+id/action_authButton"
-        android:title="Login"
+    <item
+        android:id="@+id/action_authButton"
+        android:title="@string/repo_menu_auth"
         app:showAsAction="never"/>
 </menu>

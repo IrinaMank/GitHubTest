@@ -21,22 +21,15 @@ class RepositoryDiffUtil(
         oldItemPosition: Int,
         newItemPosition: Int
     ): Boolean {
-        return oldRepositories[oldItemPosition] === newRepositories[newItemPosition]
+        if (oldRepositories[oldItemPosition] === newRepositories[newItemPosition]) return true
+        return oldRepositories[oldItemPosition].id == newRepositories[newItemPosition].id
     }
 
     override fun areContentsTheSame(
         oldItemPosition: Int,
         newItemPosition: Int
     ): Boolean {
-        return when {
-            oldRepositories[oldItemPosition]::class != newRepositories[newItemPosition]::class -> false
-            oldRepositories[oldItemPosition].id == newRepositories[newItemPosition].id -> true
-            else -> false
-        }
-    }
-
-    override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
-        return super.getChangePayload(oldItemPosition, newItemPosition)
+        return oldRepositories[oldItemPosition] == newRepositories[newItemPosition]
     }
 
 }

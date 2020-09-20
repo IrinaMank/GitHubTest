@@ -3,7 +3,7 @@ package com.mankovskaya.githubtest.core.android
 import android.content.Context
 import androidx.annotation.StringRes
 
-class ResourceManager(private val context: Context) {
+class ResourceManager(context: Context) {
     private val resources = context.resources
 
     fun getString(@StringRes stringId: Int, vararg args: Any? = arrayOf()): String =
