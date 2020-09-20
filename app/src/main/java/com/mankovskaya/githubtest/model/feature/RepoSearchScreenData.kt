@@ -4,13 +4,8 @@ import com.mankovskaya.githubtest.model.data.Repository
 
 data class RepositoriesSearchState(
     val searchQuery: String?,
-    val repositoriesState: RepositoriesState
+    val repositories: List<Repository>
 )
-
-sealed class RepositoriesState {
-    data class SucceedRepositories(val repos: List<Repository>): RepositoriesState()
-    object EmptyRepositories : RepositoriesState()
-}
 
 sealed class RepositorySearchAction {
     data class SearchChanged(val searchInput: String) : RepositorySearchAction()

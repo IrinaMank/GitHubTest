@@ -1,7 +1,10 @@
 package com.mankovskaya.githubtest.ui.repos
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
@@ -12,12 +15,16 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mankovskaya.githubtest.R
 import com.mankovskaya.githubtest.core.android.BaseFragment
+import com.mankovskaya.githubtest.core.paging.PagingManager
 import com.mankovskaya.githubtest.databinding.FragmentRepositoriesBinding
-import com.mankovskaya.githubtest.model.feature.*
+import com.mankovskaya.githubtest.model.feature.RepositoriesSearchState
+import com.mankovskaya.githubtest.model.feature.RepositoriesViewModel
+import com.mankovskaya.githubtest.model.feature.RepositoriesViewModel.Companion.PAGE_SIZE
+import com.mankovskaya.githubtest.model.feature.RepositorySearchAction
 import kotlinx.android.synthetic.main.view_toolbar.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
-class RepositoriesFragment : BaseFragment<RepositoriesViewModel>() {
+class RepositoriesFragment : BaseFragment<RepositoriesViewModel>(), PagingManager {
     override val fragmentViewModel: RepositoriesViewModel by viewModel()
 
     private val adapter by lazy { RepositoryAdapter() }
@@ -41,11 +48,10 @@ class RepositoriesFragment : BaseFragment<RepositoriesViewModel>() {
                 adapter = this@RepositoriesFragment.adapter
                 itemAnimator = DefaultItemAnimator()
             }
+            repoRecyclerView.emitPaging(PAGE_SIZE)
             fragmentViewModel.getStateRelay().observe(this@RepositoriesFragment as LifecycleOwner,
                 Observer<RepositoriesSearchState> {
-                    if(it.repositoriesState is RepositoriesState.SucceedRepositories) {
-                        adapter.setItems(it.repositoriesState.repos)
-                    }
+                    adapter.setItems(it.repositories)
                 })
         }
         return view

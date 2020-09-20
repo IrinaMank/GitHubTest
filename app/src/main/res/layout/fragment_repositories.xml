@@ -6,8 +6,6 @@
     <data>
 
         <import type="android.view.View" />
-        <import type="com.mankovskaya.githubtest.model.feature.RepositoriesState.EmptyRepositories"/>
-        <import type="com.mankovskaya.githubtest.model.feature.RepositoriesState.SucceedRepositories"/>
 
         <variable
             name="stateViewModel"
@@ -28,13 +26,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/toolbar"
-            android:visibility="@{viewModel.stateRelay.repositoriesState instanceof SucceedRepositories ? View.VISIBLE : View.GONE }">
+            android:visibility="@{viewModel.stateRelay.repositories.isEmpty() ? View.GONE : View.VISIBLE }">
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/repoRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:listitem="@layout/item_repository"
-                tools:itemCount="3"/>
+                tools:itemCount="3" />
         </FrameLayout>
 
 
@@ -49,7 +48,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/toolbar"
-            android:visibility="@{viewModel.stateRelay.repositoriesState instanceof EmptyRepositories ? View.VISIBLE : View.GONE }">
+            android:visibility="@{viewModel.stateRelay.repositories.isEmpty() ? View.VISIBLE : View.GONE }">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -57,7 +57,7 @@
                 android:layout_margin="@dimen/size_large"
                 android:textAlignment="center"
                 android:textSize="@dimen/size_large"
-                android:text="No repositories found. \nTry to change your search query"/>
+                android:text="No repositories found. \nTry to change your search query" />
         </FrameLayout>
     </RelativeLayout>
 

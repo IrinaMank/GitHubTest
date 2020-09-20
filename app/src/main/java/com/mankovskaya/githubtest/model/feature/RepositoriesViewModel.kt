@@ -1,32 +1,21 @@
 package com.mankovskaya.githubtest.model.feature
 
-import com.jakewharton.rxrelay2.BehaviorRelay
 import com.mankovskaya.githubtest.core.mvvm.BaseStatefulViewModel
 import com.mankovskaya.githubtest.core.mvvm.StateReducer
+import com.mankovskaya.githubtest.core.paging.PagingTool
 import com.mankovskaya.githubtest.model.repository.RepoRepository
 import com.mankovskaya.githubtest.ui.widget.ErrorState
 import com.mankovskaya.githubtest.ui.widget.StateAction
-import io.reactivex.android.schedulers.AndroidSchedulers
-import java.util.concurrent.TimeUnit
 
 class RepositoriesViewModel(
     private val repoRepository: RepoRepository
 ) : BaseStatefulViewModel<RepositoriesSearchState, RepositorySearchAction, Unit>(
     RepositoriesSearchState(
         searchQuery = null,
-        repositoriesState = RepositoriesState.EmptyRepositories
+        repositories = listOf()
     )
 ) {
-    private val searchRelay = BehaviorRelay.create<String>()
     override val stateReducer = RepositoryReducer()
-
-    init {
-        searchRelay.debounce(1, TimeUnit.SECONDS)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(AndroidSchedulers.mainThread())
-            .subscribe({ searchRepos(it) }, {})
-            .subscribeUntilDestroy()
-    }
 
     inner class RepositoryReducer :
         StateReducer<RepositoriesSearchState, RepositorySearchAction>() {
@@ -37,7 +26,7 @@ class RepositoriesViewModel(
             return when (action) {
                 is RepositorySearchAction.SearchChanged -> {
                     state.copy(searchQuery = action.searchInput).also {
-                        searchRelay.accept(action.searchInput)
+                        searchRepos(action.searchInput)
                     }
                 }
                 is RepositorySearchAction.SearchStarted -> {
@@ -50,11 +39,7 @@ class RepositoriesViewModel(
                 }
                 is RepositorySearchAction.RepositoryRefreshed -> {
                     sendStateAction(StateAction.ProgressStopped)
-                    if (action.newList.isEmpty()) {
-                        state.copy(repositoriesState = RepositoriesState.EmptyRepositories)
-                    } else {
-                        state.copy(repositoriesState = RepositoriesState.SucceedRepositories(action.newList))
-                    }
+                    state.copy(repositories = action.newList)
                 }
             }
         }
@@ -62,17 +47,35 @@ class RepositoriesViewModel(
 
     private fun searchRepos(searchInput: String) {
         if (searchInput.isEmpty()) return
+        if (disposables.anyInProgress(TAG_SEARCH_REQUEST)) {
+            disposables.unsubscribeBy(TAG_SEARCH_REQUEST)
+        }
+        PagingTool.dispatchNewPage(1, PAGE_SIZE)
         repoRepository.search(searchInput)
             .doOnSubscribe { reactOnAction(RepositorySearchAction.SearchStarted) }
             .subscribe(
-                {
-                    reactOnAction(RepositorySearchAction.RepositoryRefreshed(it))
+                { result ->
+                    val newList = if (PagingTool.currentPage() > 1) {
+                        getCurrentState().repositories.toMutableList().apply { addAll(result) }
+                    } else {
+                        result
+                    }
+                    reactOnAction(RepositorySearchAction.RepositoryRefreshed(newList))
                 },
                 {
-                    reactOnAction(RepositorySearchAction.SearchError(it.localizedMessage ?: "Error"))
+                    reactOnAction(
+                        RepositorySearchAction.SearchError(
+                            it.localizedMessage ?: "Error"
+                        )
+                    )
                 }
-            ).subscribeUntilDestroy()
+            ).subscribeUntilDestroyBy(TAG_SEARCH_REQUEST)
 
+    }
+
+    companion object {
+        const val PAGE_SIZE = 10
+        private const val TAG_SEARCH_REQUEST = "TAG_SEARCH_REQUEST"
     }
 
 }

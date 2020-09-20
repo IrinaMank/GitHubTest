@@ -3,6 +3,7 @@ package com.mankovskaya.githubtest.core.mvvm
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.distinctUntilChanged
 import com.mankovskaya.githubtest.core.android.Disposables
 import io.reactivex.disposables.Disposable
 
@@ -10,7 +11,7 @@ abstract class BaseViewModel<State, Action, Event>(
     private val initialState: State
 ) : ViewModel() {
     private val stateRelay: MutableLiveData<State> = MutableLiveData(initialState)
-    private val disposables = Disposables()
+    protected val disposables = Disposables()
     protected abstract val stateReducer: StateReducer<State, Action>
     val liveEvent = LiveEvent<Event>()
 
@@ -19,7 +20,9 @@ abstract class BaseViewModel<State, Action, Event>(
         super.onCleared()
     }
 
-    fun getStateRelay(): LiveData<State> = stateRelay
+    fun getStateRelay(): LiveData<State> = stateRelay.distinctUntilChanged()
+
+    fun getCurrentState(): State = stateRelay.value ?: initialState
 
     fun reactOnAction(action: Action) {
         stateRelay.value = stateReducer.reduce(stateRelay.value ?: initialState, action)
@@ -31,6 +34,10 @@ abstract class BaseViewModel<State, Action, Event>(
 
     protected fun Disposable.subscribeUntilDestroy() {
         disposables.add(this)
+    }
+
+    protected fun Disposable.subscribeUntilDestroyBy(tag: String) {
+        disposables.add(tag, this)
     }
 
 }
