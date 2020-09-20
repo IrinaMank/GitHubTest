@@ -3,20 +3,22 @@ package com.mankovskaya.githubtest.ui.repos
 import androidx.recyclerview.widget.DiffUtil
 import com.mankovskaya.githubtest.R
 import com.mankovskaya.githubtest.core.android.BaseRecyclerViewAdapter
+import com.mankovskaya.githubtest.core.paging.PagingAdapter
 import com.mankovskaya.githubtest.model.data.Repository
 
-class RepositoryAdapter : BaseRecyclerViewAdapter() {
+class RepositoryAdapter : BaseRecyclerViewAdapter(), PagingAdapter {
 
     private val items: MutableList<Repository> = mutableListOf()
 
     override fun getLayoutIdForPosition(position: Int): Int {
-        val item = items[position]
-        return R.layout.item_repository
+        return if (isLoading && position == itemCount - 1) R.layout.item_lazy_load_footer else R.layout.item_repository
     }
 
-    override fun getViewModel(position: Int): Any? = items[position]
+    override fun getViewModel(position: Int): Any? =
+        if (isLoading && position == itemCount - 1) null
+        else items[position]
 
-    override fun getItemCount() = items.size
+    override fun getItemCount() = if (isLoading) items.size + 1 else items.size
 
     fun setItems(items: List<Repository>) {
         val oldItems = this.items.toList()
@@ -31,6 +33,14 @@ class RepositoryAdapter : BaseRecyclerViewAdapter() {
     fun addItems(newItems: List<Repository>, notify: Boolean) {
         if (newItems.isNotEmpty()) items.addAll(newItems)
         if (notify) notifyDataSetChanged()
+    }
+
+    override var isLoading: Boolean = false
+
+    override fun showLoading(show: Boolean) {
+        if (isLoading == show) return
+        isLoading = show
+        if (show) notifyItemInserted(items.size) else notifyItemRemoved(items.size)
     }
 
 

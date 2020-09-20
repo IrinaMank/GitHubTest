@@ -12,14 +12,14 @@ class RepoRepository(
 ) : BaseRepository(schedulersProvider) {
 
     fun search(query: String): Observable<List<Repository>> =
-        PagingTool.observePaging {
-            searchApi.searchRepositories(query, it.pageNumber, it.pageSize).map {
-                it.items.map {
+        PagingTool.wrapToPagination {
+            searchApi.searchRepositories(query, it.pageNumber, it.pageSize).map { response ->
+                response.items.map { repoResponse ->
                     Repository(
-                        id = it.id,
-                        ownerAvatarUrl = it.owner.avatar,
-                        title = it.title,
-                        description = it.description ?: ""
+                        id = repoResponse.id,
+                        ownerAvatarUrl = repoResponse.owner.avatar,
+                        title = repoResponse.title,
+                        description = repoResponse.description ?: ""
                     )
                 }
             }

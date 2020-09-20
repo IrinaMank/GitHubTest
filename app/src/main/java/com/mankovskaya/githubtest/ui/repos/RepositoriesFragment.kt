@@ -52,6 +52,7 @@ class RepositoriesFragment : BaseFragment<RepositoriesViewModel>(), PagingManage
             fragmentViewModel.getStateRelay().observe(this@RepositoriesFragment as LifecycleOwner,
                 Observer<RepositoriesSearchState> {
                     adapter.setItems(it.repositories)
+                    adapter.showLoading(it.lazyLoad)
                 })
         }
         return view

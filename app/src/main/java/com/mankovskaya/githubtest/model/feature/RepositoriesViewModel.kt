@@ -3,6 +3,7 @@ package com.mankovskaya.githubtest.model.feature
 import com.mankovskaya.githubtest.core.mvvm.BaseStatefulViewModel
 import com.mankovskaya.githubtest.core.mvvm.StateReducer
 import com.mankovskaya.githubtest.core.paging.PagingTool
+import com.mankovskaya.githubtest.model.data.Repository
 import com.mankovskaya.githubtest.model.repository.RepoRepository
 import com.mankovskaya.githubtest.ui.widget.ErrorState
 import com.mankovskaya.githubtest.ui.widget.StateAction
@@ -12,10 +13,15 @@ class RepositoriesViewModel(
 ) : BaseStatefulViewModel<RepositoriesSearchState, RepositorySearchAction, Unit>(
     RepositoriesSearchState(
         searchQuery = null,
-        repositories = listOf()
+        repositories = listOf(),
+        lazyLoad = false
     )
 ) {
     override val stateReducer = RepositoryReducer()
+
+    init {
+        listenToPagingUpdates()
+    }
 
     inner class RepositoryReducer :
         StateReducer<RepositoriesSearchState, RepositorySearchAction>() {
@@ -41,36 +47,61 @@ class RepositoriesViewModel(
                     sendStateAction(StateAction.ProgressStopped)
                     state.copy(repositories = action.newList)
                 }
+                is RepositorySearchAction.LazyLoadChanged -> {
+                    state.copy(lazyLoad = action.show)
+                }
             }
         }
     }
 
     private fun searchRepos(searchInput: String) {
         if (searchInput.isEmpty()) return
-        if (disposables.anyInProgress(TAG_SEARCH_REQUEST)) {
-            disposables.unsubscribeBy(TAG_SEARCH_REQUEST)
-        }
-        PagingTool.dispatchNewPage(1, PAGE_SIZE)
+        terminatePreviousSearchRequests()
         repoRepository.search(searchInput)
             .doOnSubscribe { reactOnAction(RepositorySearchAction.SearchStarted) }
             .subscribe(
                 { result ->
-                    val newList = if (PagingTool.currentPage() > 1) {
-                        getCurrentState().repositories.toMutableList().apply { addAll(result) }
-                    } else {
-                        result
-                    }
-                    reactOnAction(RepositorySearchAction.RepositoryRefreshed(newList))
+                    processResult(result)
                 },
                 {
-                    reactOnAction(
-                        RepositorySearchAction.SearchError(
-                            it.localizedMessage ?: "Error"
-                        )
-                    )
+                    processError(it)
                 }
             ).subscribeUntilDestroyBy(TAG_SEARCH_REQUEST)
 
+    }
+
+    private fun listenToPagingUpdates() {
+        PagingTool.observePaging()
+            .subscribe {
+                if (it.pageNumber > 1) reactOnAction(RepositorySearchAction.LazyLoadChanged(true))
+            }
+            .subscribeUntilDestroy()
+    }
+
+    private fun terminatePreviousSearchRequests() {
+        if (disposables.anyInProgress(TAG_SEARCH_REQUEST)) {
+            disposables.unsubscribeBy(TAG_SEARCH_REQUEST)
+        }
+        PagingTool.dispatchNewPage(1, PAGE_SIZE)
+    }
+
+    private fun processResult(result: List<Repository>) {
+        reactOnAction(RepositorySearchAction.LazyLoadChanged(false))
+        val newList = if (PagingTool.currentPage() > 1) {
+            getCurrentState().repositories.toMutableList().apply { addAll(result) }
+        } else {
+            result
+        }
+        reactOnAction(RepositorySearchAction.RepositoryRefreshed(newList))
+    }
+
+    private fun processError(error: Throwable) {
+        reactOnAction(RepositorySearchAction.LazyLoadChanged(false))
+        reactOnAction(
+            RepositorySearchAction.SearchError(
+                error.localizedMessage ?: "Error"
+            )
+        )
     }
 
     companion object {
