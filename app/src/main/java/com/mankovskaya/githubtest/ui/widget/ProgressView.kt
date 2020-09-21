@@ -5,9 +5,9 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.lifecycle.LifecycleOwner
-import com.mankovskaya.githubtest.databinding.ViewStateBinding
+import com.mankovskaya.githubtest.databinding.ViewProgressBinding
 
-class StateView : FrameLayout {
+class ProgressView : FrameLayout {
 
     constructor(
         context: Context
@@ -32,12 +32,12 @@ class StateView : FrameLayout {
         defStyleRes: Int
     ) : super(context, attrs, defStyleAttr, defStyleRes)
 
-    private val binding: ViewStateBinding =
-        ViewStateBinding.inflate(LayoutInflater.from(context), this, true)
+    private val binding: ViewProgressBinding =
+        ViewProgressBinding.inflate(LayoutInflater.from(context), this, true)
 
-    fun setViewModel(viewModel: StateViewModel) {
+    fun setViewModel(viewModel: ProgressViewModel) {
         binding.viewModel = viewModel
         binding.lifecycleOwner = this.context as? LifecycleOwner
-        binding.retryButton.setOnClickListener { viewModel.reactOnAction(StateAction.ButtonClicked) }
+        binding.retryButton.setOnClickListener { viewModel.reactOnAction(ProgressAction.ButtonClicked) }
     }
 }

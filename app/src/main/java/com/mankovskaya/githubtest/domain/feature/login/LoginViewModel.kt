@@ -2,12 +2,12 @@ package com.mankovskaya.githubtest.domain.feature.login
 
 import com.mankovskaya.githubtest.R
 import com.mankovskaya.githubtest.core.android.ResourceManager
-import com.mankovskaya.githubtest.core.mvvm.BaseStatefulViewModel
+import com.mankovskaya.githubtest.core.mvvm.BaseProgressViewModel
 import com.mankovskaya.githubtest.core.mvvm.StateReducer
 import com.mankovskaya.githubtest.data.repository.AuthRepository
 import com.mankovskaya.githubtest.ui.common.getDefaultMessageId
 import com.mankovskaya.githubtest.ui.widget.ErrorState
-import com.mankovskaya.githubtest.ui.widget.StateAction
+import com.mankovskaya.githubtest.ui.widget.ProgressAction
 
 data class LoginState(
     val email: String?,
@@ -31,7 +31,7 @@ class LoginViewModel(
     private val resourceManager: ResourceManager,
     private val authRepository: AuthRepository
 ) :
-    BaseStatefulViewModel<LoginState, LoginAction, LoginEvent>(
+    BaseProgressViewModel<LoginState, LoginAction, LoginEvent>(
         LoginState(
             null,
             null,
@@ -51,15 +51,15 @@ class LoginViewModel(
                 }
                 is LoginAction.Login -> {
                     login(state.email!!, state.password!!)
-                    sendStateAction(StateAction.ProgressStarted)
+                    sendStateAction(ProgressAction.ProgressStarted)
                     state.copy(error = null)
                 }
                 is LoginAction.SuccessfulLogin -> {
-                    sendStateAction(StateAction.ProgressStopped)
+                    sendStateAction(ProgressAction.ProgressStopped)
                     state.also { navigateNext() }
                 }
                 is LoginAction.LoginError -> {
-                    sendStateAction(StateAction.ProgressStopped)
+                    sendStateAction(ProgressAction.ProgressStopped)
                     state.copy(error = action.error)
                 }
             }
@@ -75,7 +75,7 @@ class LoginViewModel(
                         LoginAction.LoginError(resourceManager.getString(R.string.login_wrong_credentials_error))
                     )
                 }, {
-                    sendStateAction(StateAction.ErrorOccurred(
+                    sendStateAction(ProgressAction.ErrorOccurred(
                         ErrorState(resourceManager.getString(it.getDefaultMessageId())) {
                             login(
                                 email,

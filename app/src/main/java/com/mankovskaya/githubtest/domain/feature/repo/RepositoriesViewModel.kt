@@ -1,7 +1,7 @@
 package com.mankovskaya.githubtest.domain.feature.repo
 
 import com.mankovskaya.githubtest.core.android.ResourceManager
-import com.mankovskaya.githubtest.core.mvvm.BaseStatefulViewModel
+import com.mankovskaya.githubtest.core.mvvm.BaseProgressViewModel
 import com.mankovskaya.githubtest.core.mvvm.StateReducer
 import com.mankovskaya.githubtest.core.paging.PagingTool
 import com.mankovskaya.githubtest.data.model.RepositoryResult
@@ -9,13 +9,13 @@ import com.mankovskaya.githubtest.data.repository.AuthRepository
 import com.mankovskaya.githubtest.data.repository.RepoRepository
 import com.mankovskaya.githubtest.ui.common.getDefaultMessageId
 import com.mankovskaya.githubtest.ui.widget.ErrorState
-import com.mankovskaya.githubtest.ui.widget.StateAction
+import com.mankovskaya.githubtest.ui.widget.ProgressAction
 
 class RepositoriesViewModel(
     private val repoRepository: RepoRepository,
     private val authRepository: AuthRepository,
     private val resourceManager: ResourceManager
-) : BaseStatefulViewModel<RepositoriesSearchState, RepositorySearchAction, RepoEvent>(
+) : BaseProgressViewModel<RepositoriesSearchState, RepositorySearchAction, RepoEvent>(
     RepositoriesSearchState(
         searchQuery = null,
         repositories = listOf(),
@@ -40,11 +40,11 @@ class RepositoriesViewModel(
                     }
                 }
                 is RepositorySearchAction.SearchStarted -> {
-                    sendStateAction(StateAction.ProgressStarted)
+                    sendStateAction(ProgressAction.ProgressStarted)
                     state
                 }
                 is RepositorySearchAction.RepositoryRefreshed -> {
-                    sendStateAction(StateAction.ProgressStopped)
+                    sendStateAction(ProgressAction.ProgressStopped)
                     state.copy(repositories = action.newList)
                 }
                 is RepositorySearchAction.LazyLoadChanged -> {
@@ -79,7 +79,7 @@ class RepositoriesViewModel(
                 },
                 {
                     reactOnAction(RepositorySearchAction.LazyLoadChanged(false))
-                    sendStateAction(StateAction.ErrorOccurred(
+                    sendStateAction(ProgressAction.ErrorOccurred(
                         ErrorState(resourceManager.getString(it.getDefaultMessageId())) {
                             searchRepos(
                                 searchInput

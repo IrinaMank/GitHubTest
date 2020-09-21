@@ -8,7 +8,7 @@
 
         <variable
             name="viewModel"
-            type="com.mankovskaya.githubtest.ui.widget.StateViewModel" />
+            type="com.mankovskaya.githubtest.ui.widget.ProgressViewModel" />
     </data>
 
     <FrameLayout

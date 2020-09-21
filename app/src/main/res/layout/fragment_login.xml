@@ -11,7 +11,7 @@
 
         <variable
             name="stateViewModel"
-            type="com.mankovskaya.githubtest.ui.widget.StateViewModel" />
+            type="com.mankovskaya.githubtest.ui.widget.ProgressViewModel" />
 
         <variable
             name="viewModel"
@@ -100,7 +100,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <com.mankovskaya.githubtest.ui.widget.StateView
+        <com.mankovskaya.githubtest.ui.widget.ProgressView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/toolbar"
