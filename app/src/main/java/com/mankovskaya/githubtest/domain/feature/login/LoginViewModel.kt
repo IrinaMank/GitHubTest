@@ -4,7 +4,7 @@ import com.mankovskaya.githubtest.R
 import com.mankovskaya.githubtest.core.android.ResourceManager
 import com.mankovskaya.githubtest.core.mvvm.BaseProgressViewModel
 import com.mankovskaya.githubtest.core.mvvm.StateReducer
-import com.mankovskaya.githubtest.data.repository.AuthRepository
+import com.mankovskaya.githubtest.domain.api.AuthRepositoryApi
 import com.mankovskaya.githubtest.ui.common.getDefaultMessageId
 import com.mankovskaya.githubtest.ui.widget.ErrorState
 import com.mankovskaya.githubtest.ui.widget.ProgressAction
@@ -29,7 +29,7 @@ sealed class LoginAction {
 
 class LoginViewModel(
     private val resourceManager: ResourceManager,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepositoryApi
 ) :
     BaseProgressViewModel<LoginState, LoginAction, LoginEvent>(
         LoginState(

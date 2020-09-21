@@ -14,6 +14,8 @@ import com.mankovskaya.githubtest.data.network.interceptor.ErrorInterceptor
 import com.mankovskaya.githubtest.data.repository.AuthRepository
 import com.mankovskaya.githubtest.data.repository.CredentialsHolder
 import com.mankovskaya.githubtest.data.repository.RepoRepository
+import com.mankovskaya.githubtest.domain.api.AuthRepositoryApi
+import com.mankovskaya.githubtest.domain.api.RepoRepositoryApi
 import com.mankovskaya.githubtest.domain.feature.login.LoginViewModel
 import com.mankovskaya.githubtest.domain.feature.repo.RepositoriesViewModel
 import com.mankovskaya.githubtest.system.scheduler.AppSchedulers
@@ -56,8 +58,11 @@ val networkModule = module {
     factory { provideAuthApi(get()) }
     factory { provideSearchApi(get()) }
     single { provideRetrofit(get()) }
-    single { AuthRepository(get(), get(), get()) }
-    single { RepoRepository(get(), get()) }
+}
+
+val dataModule = module {
+    single<AuthRepositoryApi> { AuthRepository(get(), get(), get()) }
+    single<RepoRepositoryApi> { RepoRepository(get(), get()) }
 }
 
 fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {

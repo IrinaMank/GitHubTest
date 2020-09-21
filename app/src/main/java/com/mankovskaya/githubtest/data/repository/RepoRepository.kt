@@ -6,15 +6,16 @@ import com.mankovskaya.githubtest.data.model.Repository
 import com.mankovskaya.githubtest.data.model.RepositoryResult
 import com.mankovskaya.githubtest.data.network.api.SearchApi
 import com.mankovskaya.githubtest.data.network.model.RepoSearchResponse
+import com.mankovskaya.githubtest.domain.api.RepoRepositoryApi
 import com.mankovskaya.githubtest.system.scheduler.SchedulersProvider
 import io.reactivex.Observable
 
 class RepoRepository(
     private val searchApi: SearchApi,
     schedulersProvider: SchedulersProvider
-) : BaseRepository(schedulersProvider) {
+) : BaseRepository(schedulersProvider), RepoRepositoryApi {
 
-    fun pagedSearch(query: String): Observable<RepositoryResult> =
+    override fun pagedSearch(query: String): Observable<RepositoryResult> =
         PagingTool.wrapToPagination { pagingData ->
             searchApi.searchRepositories(query, pagingData.pageNumber, pagingData.pageSize)
                 .map { it to pagingData.pageNumber * pagingData.pageSize }

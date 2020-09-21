@@ -5,15 +5,15 @@ import com.mankovskaya.githubtest.core.mvvm.BaseProgressViewModel
 import com.mankovskaya.githubtest.core.mvvm.StateReducer
 import com.mankovskaya.githubtest.core.paging.PagingTool
 import com.mankovskaya.githubtest.data.model.RepositoryResult
-import com.mankovskaya.githubtest.data.repository.AuthRepository
-import com.mankovskaya.githubtest.data.repository.RepoRepository
+import com.mankovskaya.githubtest.domain.api.AuthRepositoryApi
+import com.mankovskaya.githubtest.domain.api.RepoRepositoryApi
 import com.mankovskaya.githubtest.ui.common.getDefaultMessageId
 import com.mankovskaya.githubtest.ui.widget.ErrorState
 import com.mankovskaya.githubtest.ui.widget.ProgressAction
 
 class RepositoriesViewModel(
-    private val repoRepository: RepoRepository,
-    private val authRepository: AuthRepository,
+    private val repoRepository: RepoRepositoryApi,
+    private val authRepository: AuthRepositoryApi,
     private val resourceManager: ResourceManager
 ) : BaseProgressViewModel<RepositoriesSearchState, RepositorySearchAction, RepoEvent>(
     RepositoriesSearchState(
